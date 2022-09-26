@@ -91,7 +91,7 @@ type HTTPPayload struct {
 
 	// The number of HTTP response bytes inserted into cache. Set only when a
 	// cache fill was attempted.
-	CacheFillBytes string `json:"cacheFillBytes"`
+	CacheFillBytes string `json:"cacheFillBytes,omitempty"`
 
 	// Protocol used for the request.
 	//
