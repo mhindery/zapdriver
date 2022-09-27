@@ -117,6 +117,7 @@ func NewHTTP(req *http.Request, res *http.Response) *HTTPPayload {
 		RemoteIP:      req.RemoteAddr,
 		Referer:       req.Referer(),
 		Protocol:      req.Proto,
+		ServerIP:      req.Host,
 	}
 
 	if req.URL != nil {
@@ -142,7 +143,6 @@ func NewHTTP(req *http.Request, res *http.Response) *HTTPPayload {
 func (req HTTPPayload) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	enc.AddString("requestMethod", req.RequestMethod)
 	enc.AddString("requestUrl", req.RequestURL)
-	enc.AddString("requestSize", req.RequestSize)
 	enc.AddInt("status", req.Status)
 	enc.AddString("responseSize", req.ResponseSize)
 	enc.AddString("userAgent", req.UserAgent)
@@ -153,8 +153,15 @@ func (req HTTPPayload) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	enc.AddBool("cacheLookup", req.CacheLookup)
 	enc.AddBool("cacheHit", req.CacheHit)
 	enc.AddBool("cacheValidatedWithOriginServer", req.CacheValidatedWithOriginServer)
-	enc.AddString("cacheFillBytes", req.CacheFillBytes)
 	enc.AddString("protocol", req.Protocol)
+
+	if req.RequestSize != "" {
+		enc.AddString("cacheFillBytes", req.RequestSize)
+	}
+
+	if req.CacheFillBytes != "" {
+		enc.AddString("cacheFillBytes", req.CacheFillBytes)
+	}
 
 	return nil
 }
