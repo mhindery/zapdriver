@@ -153,8 +153,11 @@ func (req HTTPPayload) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	enc.AddBool("cacheLookup", req.CacheLookup)
 	enc.AddBool("cacheHit", req.CacheHit)
 	enc.AddBool("cacheValidatedWithOriginServer", req.CacheValidatedWithOriginServer)
-	enc.AddString("cacheFillBytes", req.CacheFillBytes)
 	enc.AddString("protocol", req.Protocol)
+
+	if req.CacheFillBytes != "" {
+		enc.AddString("cacheFillBytes", req.CacheFillBytes)
+	}
 
 	return nil
 }
