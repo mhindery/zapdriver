@@ -117,6 +117,7 @@ func NewHTTP(req *http.Request, res *http.Response) *HTTPPayload {
 		RemoteIP:      req.RemoteAddr,
 		Referer:       req.Referer(),
 		Protocol:      req.Proto,
+		ServerIP:      req.Host,
 	}
 
 	if req.URL != nil {
