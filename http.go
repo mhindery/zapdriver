@@ -124,17 +124,41 @@ func NewHTTP(req *http.Request, res *http.Response) *HTTPPayload {
 		sdreq.RequestURL = req.URL.String()
 	}
 
+	// Count the requestSize: both headers and body
+	var requestSize int64
+
+	for hKey, hValue := range req.Header {
+		requestSize += int64(len([]byte(hKey)))
+		for v := range hValue {
+			requestSize += int64(len([]byte(v)))
+		}
+	}
+
 	buf := &bytes.Buffer{}
 	if req.Body != nil {
 		n, _ := io.Copy(buf, req.Body) // nolint: gas
-		sdreq.RequestSize = strconv.FormatInt(n, 10)
+		requestSize += n
+	}
+
+	sdreq.RequestSize = strconv.FormatInt(requestSize, 10)
+
+	// Count the response size, both headers and body
+	var responseSize int64
+
+	for hKey, hValue := range res.Header {
+		responseSize += int64(len([]byte(hKey)))
+		for v := range hValue {
+			responseSize += int64(len([]byte(v)))
+		}
 	}
 
 	if res.Body != nil {
 		buf.Reset()
 		n, _ := io.Copy(buf, res.Body) // nolint: gas
-		sdreq.ResponseSize = strconv.FormatInt(n, 10)
+		responseSize += n
 	}
+
+	sdreq.ResponseSize = strconv.FormatInt(responseSize, 10)
 
 	return sdreq
 }
